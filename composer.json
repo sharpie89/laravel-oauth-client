@@ -1,0 +1,33 @@
+{
+    "name": "sharpie89/laravel-oauth-client",
+    "description": "Provides an oauth client with models",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sarp Derinsu",
+            "email": "sarpderinsu@hotmail.nl"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Sharpie89\\LaravelOAuthClient\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^7.4",
+        "ext-json": "*",
+        "guzzlehttp/guzzle": "^6.0",
+        "http-interop/http-factory-guzzle": "^1.0",
+        "illuminate/support": "^6.0|^7.0",
+        "league/oauth2-client": "^2.5",
+        "php-http/guzzle6-adapter": "^2.0.1"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Sharpie89\\LaravelOAuthClient\\ServiceProvider",
+                "Sharpie89\\LaravelOAuthClient\\EventServiceProvider"
+            ]
+        }
+    }
+}
