@@ -17,6 +17,7 @@ class CreateClientsTable extends Migration
             $table->id();
 
             $table->string('url');
+            $table->string('driver');
             $table->string('client_id')
                 ->nullable();
             $table->string('client_secret')
