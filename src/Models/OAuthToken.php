@@ -5,6 +5,7 @@ namespace Sharpie89\LaravelOAuthClient\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessTokenInterface;
 use Sharpie89\LaravelOAuthClient\Casts\AccessTokenCast;
@@ -73,5 +74,10 @@ class OAuthToken extends Model
     public function scopeState(Builder $query, string $state): Builder
     {
         return $query->where('state', $state);
+    }
+
+    public function tokenizable(): MorphTo
+    {
+        return $this->morphTo();
     }
 }

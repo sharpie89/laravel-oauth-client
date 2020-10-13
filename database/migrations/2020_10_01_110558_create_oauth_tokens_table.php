@@ -21,6 +21,8 @@ class CreateOAuthTokensTable extends Migration
             $table->string('state')
                 ->unique()
                 ->nullable();
+            $table->string('tokenizable_type');
+            $table->string('tokenizable_id');
             $table->foreignId('oauth_client_id')
                 ->constrained()
                 ->cascadeOnDelete();
