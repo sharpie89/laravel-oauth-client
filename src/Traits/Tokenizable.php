@@ -3,12 +3,12 @@
 namespace Sharpie89\LaravelOAuthClient\Traits;
 
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Sharpie89\LaravelOAuthClient\Models\OAuthToken;
+use Sharpie89\LaravelOAuthClient\Models\Token;
 
-trait HasAccessTokens
+trait Tokenizable
 {
     public function accessToken(): HasOne
     {
-        return $this->morphOne(OAuthToken::class, 'tokenizable');
+        return $this->morphOne(Token::class, 'tokenizable');
     }
 }

@@ -5,7 +5,7 @@ namespace Sharpie89\LaravelOAuthClient\Client\Providers;
 use InvalidArgumentException;
 use League\OAuth2\Client\Provider\GenericProvider;
 
-class GenericOAuthProvider extends GenericProvider
+class Provider extends GenericProvider
 {
     private string $driver;
     private string $url;

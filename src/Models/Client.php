@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessTokenInterface;
-use Sharpie89\LaravelOAuthClient\Client\Providers\GenericOAuthProvider;
+use Sharpie89\LaravelOAuthClient\Client\Providers\Provider;
 
 /**
- * @property GenericOAuthProvider provider
+ * @property Provider provider
  */
-class OAuthClient extends Model
+class Client extends Model
 {
     protected $fillable = [
         'driver',
@@ -22,12 +22,12 @@ class OAuthClient extends Model
 
     public static function booted()
     {
-        static::retrieved(function (self $oauthClient) {
-            $oauthClient->attributes['provider'] = new GenericOAuthProvider([
-                'driver' => $oauthClient->driver,
-                'url' => $oauthClient->url,
-                'clientId' => $oauthClient->client_id,
-                'clientSecret' => $oauthClient->client_secret,
+        static::retrieved(function (self $client) {
+            $client->attributes['provider'] = new Provider([
+                'driver' => $client->driver,
+                'url' => $client->url,
+                'clientId' => $client->client_id,
+                'clientSecret' => $client->client_secret,
             ]);
         });
     }
@@ -45,6 +45,6 @@ class OAuthClient extends Model
 
     public function tokens(): HasMany
     {
-        return $this->hasMany(OAuthToken::class);
+        return $this->hasMany(Token::class);
     }
 }

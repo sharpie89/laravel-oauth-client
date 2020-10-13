@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOAuthTokensTable extends Migration
+class CreateClientsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,19 +13,14 @@ class CreateOAuthTokensTable extends Migration
      */
     public function up()
     {
-        Schema::create('oauth_tokens', function (Blueprint $table) {
+        Schema::create('clients', function (Blueprint $table) {
             $table->id();
 
-            $table->json('access_token')
+            $table->string('url');
+            $table->string('client_id')
                 ->nullable();
-            $table->string('state')
-                ->unique()
+            $table->string('client_secret')
                 ->nullable();
-            $table->string('tokenizable_type');
-            $table->string('tokenizable_id');
-            $table->foreignId('oauth_client_id')
-                ->constrained()
-                ->cascadeOnDelete();
 
             $table->timestamps();
         });
@@ -38,6 +33,6 @@ class CreateOAuthTokensTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('oauth_tokens');
+        Schema::dropIfExists('clients');
     }
 }

@@ -12,12 +12,12 @@ use Sharpie89\LaravelOAuthClient\Casts\AccessTokenCast;
 
 /**
  * @property AccessTokenInterface access_token
- * @property OAuthClient client
+ * @property Client client
  * @property string state
  * @property-write string code
  * @method Builder state(string $state)
  */
-class OAuthToken extends Model
+class Token extends Model
 {
     public const GRANT_AUTHORIZATION_CODE = 'authorization_code';
     public const GRANT_REFRESH_TOKEN = 'refresh_token';
@@ -31,7 +31,7 @@ class OAuthToken extends Model
 
     public function client(): BelongsTo
     {
-        return $this->belongsTo(OAuthClient::class);
+        return $this->belongsTo(Client::class);
     }
 
     public function getAuthorizationUrlAttribute(): string

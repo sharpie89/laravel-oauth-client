@@ -5,7 +5,7 @@ namespace Sharpie89\LaravelOAuthClient\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Sharpie89\LaravelOAuthClient\Events\OAuthCallbackEvent;
-use Sharpie89\LaravelOAuthClient\Models\OAuthToken;
+use Sharpie89\LaravelOAuthClient\Models\Token;
 
 class OAuthCallback
 {
@@ -23,8 +23,8 @@ class OAuthCallback
             ],
         ]);
 
-        /** @var OAuthToken $oauthToken */
-        $oauthToken = OAuthToken::query()
+        /** @var Token $oauthToken */
+        $oauthToken = Token::query()
             ->state($request->get('state'))
             ->first();
 

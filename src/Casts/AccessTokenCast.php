@@ -5,12 +5,12 @@ namespace Sharpie89\LaravelOAuthClient\Casts;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Token\AccessTokenInterface;
-use Sharpie89\LaravelOAuthClient\Models\OAuthToken;
+use Sharpie89\LaravelOAuthClient\Models\Token;
 
 class AccessTokenCast implements CastsAttributes
 {
     /**
-     * @param  OAuthToken  $model
+     * @param  Token  $model
      * @param  string  $key
      * @param  array  $value
      * @param  array  $attributes
@@ -22,7 +22,7 @@ class AccessTokenCast implements CastsAttributes
     }
 
     /**
-     * @param  OAuthToken  $model
+     * @param  Token  $model
      * @param  string  $key
      * @param  AccessTokenInterface  $value
      * @param  array  $attributes
