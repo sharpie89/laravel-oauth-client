@@ -22,6 +22,11 @@ class Token extends Model
     public const GRANT_AUTHORIZATION_CODE = 'authorization_code';
     public const GRANT_REFRESH_TOKEN = 'refresh_token';
 
+    protected $fillable = [
+        'tokenizable_type',
+        'tokenizable_id'
+    ];
+
     /**
      * @var string[]
      */
