@@ -22,7 +22,7 @@ class CreateTokensTable extends Migration
                 ->unique()
                 ->nullable();
             $table->string('tokenizable_type');
-            $table->string('tokenizable_id');
+            $table->foreignId('tokenizable_id');
             $table->foreignId('client_id')
                 ->constrained()
                 ->cascadeOnDelete();

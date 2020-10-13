@@ -14,6 +14,7 @@ use Sharpie89\LaravelOAuthClient\Casts\AccessTokenCast;
  * @property AccessTokenInterface access_token
  * @property Client client
  * @property string state
+ * @property string authorization_url
  * @property-write string code
  * @method Builder state(string $state)
  */

@@ -25,9 +25,13 @@ class Client extends Model
         static::retrieved(function (self $client) {
             $client->attributes['provider'] = new Provider([
                 'driver' => $client->driver,
-                'url' => $client->url,
                 'clientId' => $client->client_id,
                 'clientSecret' => $client->client_secret,
+                'redirectUri' => url('oauth/callback'),
+            ], [
+                'httpClient' => new \GuzzleHttp\Client([
+                    'base_uri' => $client->url,
+                ]),
             ]);
         });
     }

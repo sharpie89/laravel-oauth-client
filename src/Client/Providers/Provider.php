@@ -2,76 +2,144 @@
 
 namespace Sharpie89\LaravelOAuthClient\Client\Providers;
 
-use InvalidArgumentException;
-use League\OAuth2\Client\Provider\GenericProvider;
+use League\OAuth2\Client\Provider\AbstractProvider;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use League\OAuth2\Client\Provider\GenericResourceOwner;
+use League\OAuth2\Client\Provider\ResourceOwnerInterface;
+use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
+use Psr\Http\Message\ResponseInterface;
 
-class Provider extends GenericProvider
+class Provider extends AbstractProvider
 {
-    private string $driver;
-    private string $url;
+    use BearerAuthorizationTrait;
 
-    private array $defaultRequiredOptions = [
-        'urlAuthorize' => 'login/oauth/authorize',
-        'urlAccessToken' => 'login/oauth/access_token',
-        'urlResourceOwnerDetails' => 'api/v1/user'
-    ];
+    private string $driver;
+    private string $urlAuthorize = 'login/oauth/authorize';
+    private string $urlAccessToken = 'login/oauth/access_token';
+    private string $urlResourceOwnerDetails = 'api/v1/user';
+    private ?array $scopes = null;
+    private string $responseResourceOwnerId = 'id';
+    private string $responseError = 'error';
+
+    /**
+     * @var string
+     */
+    private $accessTokenResourceOwnerId;
+
+    /**
+     * @var string
+     */
+    private $accessTokenMethod;
+
+    /**
+     * @var string
+     */
+    private $scopeSeparator;
+
+    /**
+     * @var string
+     */
+    private $responseCode;
 
     public function __construct(array $options = [], array $collaborators = [])
     {
-        $this->assertDriverOptions($options);
-
-        $possible = $this->getDriverOptions();
+        $possible = $this->getConfigurableOptions();
         $configured = array_intersect_key($options, array_flip($possible));
 
         foreach ($configured as $key => $value) {
             $this->$key = $value;
         }
 
-        $this->setRequiredOptions($options);
-
         // Remove all options that are only used locally
         $options = array_diff_key($options, $configured);
-
-        $options['redirectUri'] = $this->getRedirectUri();
 
         parent::__construct($options, $collaborators);
     }
 
-    protected function getDriverOptions(): array
+    protected function getConfigurableOptions(): array
     {
         return [
             'driver',
-            'url',
+            'urlAuthorize',
+            'urlAccessToken',
+            'urlResourceOwnerDetails',
+            'accessTokenMethod',
+            'accessTokenResourceOwnerId',
+            'scopeSeparator',
+            'responseError',
+            'responseCode',
+            'responseResourceOwnerId',
+            'scopes',
         ];
     }
 
-    protected function createRequest($method, $url, $token, array $options)
+    public function getBaseAuthorizationUrl(): string
     {
-        return parent::createRequest($method, $this->url . $url, $token, $options);
+        return config("oauth-drivers.{$this->driver}.urlAuthorize", $this->urlAuthorize);
     }
 
-    protected function getRedirectUri(): string
+    public function getBaseAccessTokenUrl(array $params): string
     {
-        return url('oauth/callback');
+        return config("oauth-drivers.{$this->driver}.urlAccessToken", $this->urlAccessToken);
     }
 
-    private function setRequiredOptions(array &$options): void
+    public function getResourceOwnerDetailsUrl(AccessToken $token): string
     {
-        foreach ($this->defaultRequiredOptions as $key => $value) {
-            $endpoint = config("oauth-drivers.{$this->driver}.{$key}", $value);
+        return config("oauth-drivers.{$this->driver}.urlResourceOwnerDetails", $this->urlResourceOwnerDetails);
+    }
 
-            $options[$key] = "{$this->url}/{$endpoint}";
+    public function getDefaultScopes(): ?array
+    {
+        return $this->scopes;
+    }
+
+    protected function getAccessTokenMethod(): string
+    {
+        return $this->accessTokenMethod ?: parent::getAccessTokenMethod();
+    }
+
+    protected function getAccessTokenResourceOwnerId(): ?string
+    {
+        return $this->accessTokenResourceOwnerId ?: parent::getAccessTokenResourceOwnerId();
+    }
+
+    protected function getScopeSeparator(): string
+    {
+        return $this->scopeSeparator ?: parent::getScopeSeparator();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function checkResponse(ResponseInterface $response, $data): void
+    {
+        if (!empty($data[$this->responseError])) {
+            $error = $data[$this->responseError];
+            if (!is_string($error)) {
+                $error = var_export($error, true);
+            }
+            $code  = $this->responseCode && !empty($data[$this->responseCode])? $data[$this->responseCode] : 0;
+            if (!is_int($code)) {
+                $code = intval($code);
+            }
+            throw new IdentityProviderException($error, $code, $data);
         }
     }
 
-    private function assertDriverOptions(array $options): void
+    protected function createResourceOwner(array $response, AccessToken $token): ResourceOwnerInterface
     {
-        $missing = array_diff_key(array_flip($this->getDriverOptions()), $options);
+        return new GenericResourceOwner($response, $this->responseResourceOwnerId);
+    }
 
-        if (!empty($missing)) {
-            throw new InvalidArgumentException(
-                'Driver options not defined: '.implode(', ', array_keys($missing))
-            );
-        }
+    /**
+     * @inheritDoc
+     */
+    protected function appendQuery($url, $query): string
+    {
+        $baseUri = $this->getHttpClient()
+            ->getConfig('base_uri');
+
+        return parent::appendQuery("{$baseUri}/{$url}", $query);
     }
 }

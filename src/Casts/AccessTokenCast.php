@@ -12,13 +12,13 @@ class AccessTokenCast implements CastsAttributes
     /**
      * @param  Token  $model
      * @param  string  $key
-     * @param  array  $value
+     * @param  string  $value
      * @param  array  $attributes
      * @return AccessTokenInterface
      */
     public function get($model, string $key, $value, array $attributes)
     {
-        return new AccessToken($value);
+        return new AccessToken(json_decode($value));
     }
 
     /**
@@ -26,10 +26,10 @@ class AccessTokenCast implements CastsAttributes
      * @param  string  $key
      * @param  AccessTokenInterface  $value
      * @param  array  $attributes
-     * @return array
+     * @return string
      */
     public function set($model, string $key, $value, array $attributes)
     {
-        return $value->jsonSerialize();
+        return json_encode($value->jsonSerialize());
     }
 }
