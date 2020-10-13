@@ -11,9 +11,9 @@ class GenericOAuthProvider extends GenericProvider
     private string $url;
 
     private array $defaultRequiredOptions = [
-        'urlAuthorize' => '/login/oauth/authorize',
-        'urlAccessToken' => '/login/oauth/access_token',
-        'urlResourceOwnerDetails' => '/api/v1/user'
+        'urlAuthorize' => 'login/oauth/authorize',
+        'urlAccessToken' => 'login/oauth/access_token',
+        'urlResourceOwnerDetails' => 'api/v1/user'
     ];
 
     public function __construct(array $options = [], array $collaborators = [])
@@ -58,7 +58,9 @@ class GenericOAuthProvider extends GenericProvider
     private function setRequiredOptions(array &$options): void
     {
         foreach ($this->defaultRequiredOptions as $key => $value) {
-            $options[$key] = $this->url.config("oauth-drivers.{$this->driver}.{$key}", $value);
+            $endpoint = config("oauth-drivers.{$this->driver}.{$key}", $value);
+
+            $options[$key] = "{$this->url}/{$endpoint}";
         }
     }
 

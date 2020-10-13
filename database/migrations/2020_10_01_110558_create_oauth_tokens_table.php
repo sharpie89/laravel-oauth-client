@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOAuthProvidersTable extends Migration
+class CreateOAuthTokensTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateOAuthProvidersTable extends Migration
      */
     public function up()
     {
-        Schema::create('oauth_providers', function (Blueprint $table) {
+        Schema::create('oauth_tokens', function (Blueprint $table) {
             $table->id();
 
             $table->json('access_token')
@@ -36,6 +36,6 @@ class CreateOAuthProvidersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('oauth_providers');
+        Schema::dropIfExists('oauth_tokens');
     }
 }

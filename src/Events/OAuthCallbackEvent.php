@@ -2,14 +2,14 @@
 
 namespace Sharpie89\LaravelOAuthClient\Events;
 
+use Sharpie89\LaravelOAuthClient\Models\OAuthToken;
+
 class OAuthCallbackEvent
 {
-    public string $state;
-    public string $code;
+    public OAuthToken $oauthToken;
 
-    public function __construct(string $state, string $code)
+    public function __construct(OAuthToken $oauthToken)
     {
-        $this->state = $state;
-        $this->code = $code;
+        $this->oauthToken = $oauthToken;
     }
 }

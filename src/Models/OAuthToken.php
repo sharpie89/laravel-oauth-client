@@ -2,6 +2,7 @@
 
 namespace Sharpie89\LaravelOAuthClient\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
@@ -9,21 +10,17 @@ use League\OAuth2\Client\Token\AccessTokenInterface;
 use Sharpie89\LaravelOAuthClient\Casts\AccessTokenCast;
 
 /**
- * @property AccessTokenInterface $access_token
+ * @property AccessTokenInterface access_token
  * @property OAuthClient client
  * @property string state
+ * @property-write string code
+ * @method Builder state(string $state)
  */
-class OAuthProvider extends Model
+class OAuthToken extends Model
 {
     public const GRANT_AUTHORIZATION_CODE = 'authorization_code';
     public const GRANT_REFRESH_TOKEN = 'refresh_token';
 
-    /**
-     * @var string[]
-     */
-    protected $fillable = [
-        'state'
-    ];
     /**
      * @var string[]
      */
@@ -41,6 +38,7 @@ class OAuthProvider extends Model
         $authorizationUrl = $this->client->provider->getAuthorizationUrl();
 
         $this->state = $this->client->provider->getState();
+
         $this->save();
 
         return $authorizationUrl;
@@ -48,27 +46,22 @@ class OAuthProvider extends Model
 
     /**
      * @param  string  $code
-     * @return $this
      * @throws IdentityProviderException
      */
-    public function authenticateByCode(string $code): self
+    public function setCodeAttribute(string $code): void
     {
-        $this->access_token = $this->client->provider->getAccessToken(self::GRANT_AUTHORIZATION_CODE, [
+        $this->access_token = $this->client->authenticate(self::GRANT_AUTHORIZATION_CODE, [
             'code' => $code
         ]);
-
-        $this->save();
-
-        return $this;
     }
 
     /**
      * @return $this
      * @throws IdentityProviderException
      */
-    public function authenticateByRefreshToken(): self
+    public function refreshAccessToken(): self
     {
-        $this->access_token = $this->client->provider->getAccessToken(self::GRANT_REFRESH_TOKEN, [
+        $this->access_token = $this->client->authenticate(self::GRANT_REFRESH_TOKEN, [
             'refresh_token' => $this->access_token->getRefreshToken()
         ]);
 
@@ -77,5 +70,8 @@ class OAuthProvider extends Model
         return $this;
     }
 
-    public function getRequest($method, $url, array $options = [])
+    public function scopeState(Builder $query, string $state): Builder
+    {
+        return $query->where('state', $state);
+    }
 }

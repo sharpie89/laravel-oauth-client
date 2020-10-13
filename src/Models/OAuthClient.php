@@ -3,6 +3,9 @@
 namespace Sharpie89\LaravelOAuthClient\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use League\OAuth2\Client\Token\AccessTokenInterface;
 use Sharpie89\LaravelOAuthClient\Client\Providers\GenericOAuthProvider;
 
 /**
@@ -27,5 +30,21 @@ class OAuthClient extends Model
                 'clientSecret' => $oauthClient->client_secret,
             ]);
         });
+    }
+
+    /**
+     * @param  string  $grant
+     * @param  array  $options
+     * @return AccessTokenInterface
+     * @throws IdentityProviderException
+     */
+    public function authenticate(string $grant, array $options): AccessTokenInterface
+    {
+        return $this->provider->getAccessToken($grant, $options);
+    }
+
+    public function tokens(): HasMany
+    {
+        return $this->hasMany(OAuthToken::class);
     }
 }
