@@ -25,21 +25,6 @@ class Provider extends AbstractProvider
     /**
      * @var string
      */
-    private $accessTokenResourceOwnerId;
-
-    /**
-     * @var string
-     */
-    private $accessTokenMethod;
-
-    /**
-     * @var string
-     */
-    private $scopeSeparator;
-
-    /**
-     * @var string
-     */
     private $responseCode;
 
     public function __construct(array $options = [], array $collaborators = [])
@@ -94,21 +79,6 @@ class Provider extends AbstractProvider
         return $this->scopes;
     }
 
-    protected function getAccessTokenMethod(): string
-    {
-        return $this->accessTokenMethod ?: parent::getAccessTokenMethod();
-    }
-
-    protected function getAccessTokenResourceOwnerId(): ?string
-    {
-        return $this->accessTokenResourceOwnerId ?: parent::getAccessTokenResourceOwnerId();
-    }
-
-    protected function getScopeSeparator(): string
-    {
-        return $this->scopeSeparator ?: parent::getScopeSeparator();
-    }
-
     /**
      * @inheritdoc
      */
@@ -119,7 +89,7 @@ class Provider extends AbstractProvider
             if (!is_string($error)) {
                 $error = var_export($error, true);
             }
-            $code  = $this->responseCode && !empty($data[$this->responseCode])? $data[$this->responseCode] : 0;
+            $code = $this->responseCode && !empty($data[$this->responseCode]) ? $data[$this->responseCode] : 0;
             if (!is_int($code)) {
                 $code = intval($code);
             }
@@ -137,9 +107,6 @@ class Provider extends AbstractProvider
      */
     protected function appendQuery($url, $query): string
     {
-        $baseUri = $this->getHttpClient()
-            ->getConfig('base_uri');
-
-        return parent::appendQuery("{$baseUri}/{$url}", $query);
+        return parent::appendQuery("{$this->getHttpClient()->getConfig('base_uri')}/{$url}", $query);
     }
 }
