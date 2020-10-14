@@ -17,10 +17,8 @@
         "php": "^7.4",
         "ext-json": "*",
         "guzzlehttp/guzzle": "^6.0 || ^7.0",
-        "http-interop/http-factory-guzzle": "^1.0",
         "illuminate/support": "^6.0|^7.0|^8.0",
-        "league/oauth2-client": "^2.5",
-        "php-http/guzzle6-adapter": "^2.0.1"
+        "league/oauth2-client": "^2.5"
     },
     "extra": {
         "laravel": {
