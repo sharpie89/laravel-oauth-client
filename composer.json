@@ -16,7 +16,7 @@
     "require": {
         "php": "^7.4",
         "ext-json": "*",
-        "guzzlehttp/guzzle": "^7.0",
+        "guzzlehttp/guzzle": "^7.0.1",
         "http-interop/http-factory-guzzle": "^1.0",
         "illuminate/support": "^6.0|^7.0|^8.0",
         "league/oauth2-client": "^2.5",
