@@ -16,13 +16,10 @@ class CreateClientsTable extends Migration
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
 
-            $table->string('url');
+            $table->json('provider_options');
+            $table->json('client_options');
             $table->string('driver')
                 ->default('default');
-            $table->json('provider_options')
-                ->default('{}');
-            $table->json('client_options')
-                ->default('{}');
 
             $table->timestamps();
         });
