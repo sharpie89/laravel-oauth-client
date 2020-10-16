@@ -17,11 +17,12 @@ class CreateClientsTable extends Migration
             $table->id();
 
             $table->string('url');
-            $table->string('driver');
-            $table->string('client_id')
-                ->nullable();
-            $table->string('client_secret')
-                ->nullable();
+            $table->string('driver')
+                ->default('default');
+            $table->json('provider_options')
+                ->default('{}');
+            $table->json('client_options')
+                ->default('{}');
 
             $table->timestamps();
         });
