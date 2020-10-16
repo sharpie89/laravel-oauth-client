@@ -10,6 +10,7 @@ use Sharpie89\LaravelOAuthClient\Client\Providers\Provider;
 
 /**
  * @property Provider provider
+ * @property array default_provider_config
  */
 class Client extends Model
 {
@@ -23,6 +24,8 @@ class Client extends Model
     public static function booted()
     {
         static::retrieved(function (self $client) {
+            $drivers = config('oauth-drivers');
+
             $client->attributes['provider'] = new Provider([
                 'driver' => $client->driver,
                 'clientId' => $client->client_id,
@@ -45,6 +48,20 @@ class Client extends Model
     public function authenticate(string $grant, array $options): AccessTokenInterface
     {
         return $this->provider->getAccessToken($grant, $options);
+    }
+
+    public function getProviderConfig(): array
+    {
+        return config("oauth.drivers.{$this->driver}", $this->default_provider_config);
+    }
+
+    public function getDefaultProviderConfigAttribute(): array
+    {
+        return config("oauth.drivers.default", [
+            'urlAuthorize' => 'login/oauth/authorize',
+            'urlAccessToken' => 'login/oauth/access_token',
+            'urlResourceOwnerDetails' => 'api/v4/user'
+        ]);
     }
 
     public function tokens(): HasMany
