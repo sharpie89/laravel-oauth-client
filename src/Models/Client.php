@@ -105,6 +105,14 @@ class Client extends Model
         );
     }
 
+    public function createTokenFor(Model $model): Token
+    {
+        return $this->tokens()->create([
+            'tokenizable_type' => $model->getMorphClass(),
+            'tokenizable_id' => $model->getKey()
+        ]);;
+    }
+
     public function getHttpClientAttribute(): HttpClient
     {
         return new HttpClient($this->client_options);
